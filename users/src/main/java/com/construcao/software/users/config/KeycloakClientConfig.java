@@ -1,5 +1,7 @@
 package com.construcao.software.users.config;
 
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.slf4j.Logger;
@@ -7,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import static org.keycloak.OAuth2Constants.CLIENT_CREDENTIALS;
 
 @Configuration
 public class KeycloakClientConfig {
@@ -29,15 +29,17 @@ public class KeycloakClientConfig {
 
     @Bean
     public Keycloak keyCloak(){
-        var keycloak = KeycloakBuilder.builder()
-                .grantType(CLIENT_CREDENTIALS)
+        return KeycloakBuilder.builder()
                 .serverUrl(authUrl)
                 .realm(realm)
+                .grantType(OAuth2Constants.PASSWORD)
+                .username("admin")
+                .password("admin")
                 .clientId(clientId)
                 .clientSecret(secretKey)
+                .resteasyClient(new ResteasyClientBuilder()
+                        .connectionPoolSize(10)
+                        .build())
                 .build();
-        LOGGER.debug(keycloak.toString());
-
-        return keycloak;
     }
 }

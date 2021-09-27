@@ -30,9 +30,9 @@ services:
       - DB_ADDR=mssql
       - DB_DATABASE=Keycloak
     command: -Dkeycloak.profile.feature.upload_scripts=enabled
-  users:
-    ports:
-      - "8000:8000"
-    image: "users:latest"
-    depends_on:
-      - keycloak
+#  users:
+#    ports:
+#      - "8000:8000"
+#    image: "users:latest"
+#    depends_on:
+#      - keycloak

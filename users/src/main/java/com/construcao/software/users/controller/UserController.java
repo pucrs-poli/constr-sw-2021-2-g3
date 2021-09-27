@@ -21,30 +21,9 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserRepresentation> getUser() {
+    public List<UserRepresentation> getAllUsers() {
         return keyCloak.realm(realm).users().list();
     }
 
-//    @GetMapping(value = "/anonymous")
-//    public ResponseEntity<String> getAnonymous() {
-//        return ResponseEntity.ok("Hello Anonymous");
-//    }
-//
-//    @RolesAllowed("user")
-//    @GetMapping(value = "/user")
-//    public ResponseEntity<String> getUser(@RequestHeader String authorization) {
-//        return ResponseEntity.ok("Hello User");
-//    }
-//
-//    @RolesAllowed("admin")
-//    @GetMapping(value = "/admin")
-//    public ResponseEntity<String> getAdmin(@RequestHeader String authorization) {
-//        return ResponseEntity.ok("Hello Admin");
-//    }
-//
-//    @RolesAllowed({ "admin", "user" })
-//    @GetMapping(value = "/all-user")
-//    public ResponseEntity<String> getAllUser(@RequestHeader String authorization) {
-//        return ResponseEntity.ok("Hello All User");
-//    }
+
 }
