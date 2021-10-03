@@ -6,6 +6,7 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +17,12 @@ public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
-    private final String realm = "Users-realm";
-
+    private final String realm;
     private final Keycloak keyCloak;
 
-    public UserController(Keycloak keyCloak) {
+    public UserController(Keycloak keyCloak, @Value("${keycloak.realm}") String realm) {
         this.keyCloak = keyCloak;
+        this.realm = realm;
     }
 
     @GetMapping
