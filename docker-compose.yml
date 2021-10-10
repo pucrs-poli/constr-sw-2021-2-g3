@@ -18,6 +18,6 @@ services:
   users:
     ports:
       - "8000:8000"
-    image: "025504720348.dkr.ecr.sa-east-1.amazonaws.com/construcao-users:latest"
+    image: "821698346054.dkr.ecr.us-east-2.amazonaws.com/construcao-users:latest"
     depends_on:
       - keycloak
