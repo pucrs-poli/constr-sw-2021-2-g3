@@ -1,4 +1,4 @@
-package com.construcao.software.users.dto;
+package com.construcao.software.users.keycloak.dto;
 
 public class UserDTO {
     private String username;

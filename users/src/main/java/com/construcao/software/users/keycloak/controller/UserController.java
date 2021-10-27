@@ -1,6 +1,6 @@
-package com.construcao.software.users.controller;
+package com.construcao.software.users.keycloak.controller;
 
-import com.construcao.software.users.dto.UserDTO;
+import com.construcao.software.users.keycloak.dto.UserDTO;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -14,8 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     private final String realm;
     private final Keycloak keyCloak;
@@ -68,8 +66,6 @@ public class UserController {
         cR.setValue(newPassword);
 
         foundUser.setCredentials(List.of(cR));
-
-        foundUser.getCredentials().forEach(e -> System.out.println(e.getValue()));
 
         keyCloak.realm(realm).users().get(userId).update(foundUser);
     }

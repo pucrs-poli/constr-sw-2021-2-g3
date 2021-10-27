@@ -1,4 +1,4 @@
-package com.construcao.software.users.config;
+package com.construcao.software.users.keycloak.config;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;

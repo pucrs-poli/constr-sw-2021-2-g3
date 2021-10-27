@@ -2,6 +2,15 @@
 version: "3.2"
 
 services:
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: sa
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo:/data/db
   keycloak:
     image: jboss/keycloak
     restart: always

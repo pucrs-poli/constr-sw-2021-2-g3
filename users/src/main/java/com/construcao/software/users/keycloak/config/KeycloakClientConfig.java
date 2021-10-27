@@ -1,4 +1,4 @@
-package com.construcao.software.users.config;
+package com.construcao.software.users.keycloak.config;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.OAuth2Constants;
