@@ -9,6 +9,18 @@ public class Papel {
     private String id;
     private String nome;
 
+    public Papel() {
+    }
+
+    public Papel(String nome) {
+        this.nome = nome;
+    }
+
+    public Papel(String id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
     public String getId() {
         return id;
     }
