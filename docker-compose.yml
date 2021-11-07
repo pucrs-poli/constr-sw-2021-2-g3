@@ -11,22 +11,22 @@ services:
       - "27017:27017"
     volumes:
       - ./mongo:/data/db
-  keycloak:
-    image: jboss/keycloak
-    restart: always
-    environment:
-      KEYCLOAK_VERSION: 6.0.1
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-    #      KEYCLOAK_IMPORT: ./realm-export.json
-    volumes:
-      - ./keycloak/realm-export.json:/tmp/realm-export.json
-    ports:
-      - "8080:8080"
-    command: -Dkeycloak.profile.feature.upload_scripts=enabled
-  users:
-    ports:
-      - "8000:8000"
-    image: "821698346054.dkr.ecr.us-east-2.amazonaws.com/construcao-users:latest"
-    depends_on:
-      - keycloak
+#  keycloak:
+#    image: jboss/keycloak
+#    restart: always
+#    environment:
+#      KEYCLOAK_VERSION: 6.0.1
+#      KEYCLOAK_USER: admin
+#      KEYCLOAK_PASSWORD: admin
+#    #      KEYCLOAK_IMPORT: ./realm-export.json
+#    volumes:
+#      - ./keycloak/realm-export.json:/tmp/realm-export.json
+#    ports:
+#      - "8080:8080"
+#    command: -Dkeycloak.profile.feature.upload_scripts=enabled
+#  users:
+#    ports:
+#      - "8000:8000"
+#    image: "821698346054.dkr.ecr.us-east-2.amazonaws.com/construcao-users:latest"
+#    depends_on:
+#      - keycloak

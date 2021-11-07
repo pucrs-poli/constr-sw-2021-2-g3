@@ -4,7 +4,12 @@ public class PapelDTO {
 
     private String nome;
 
-    private String id;
+    public PapelDTO() {
+    }
+
+    public PapelDTO(String nome) {
+        this.nome = nome;
+    }
 
     public String getNome() {
         return nome;

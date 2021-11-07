@@ -14,6 +14,13 @@ public class Usuario {
     private List<Papel> papeis;
     private String matricula;
 
+    public Usuario(String email, String login, List<Papel> papeis, String matricula) {
+        this.email = email;
+        this.login = login;
+        this.papeis = papeis;
+        this.matricula = matricula;
+    }
+
     public String getId() {
         return id;
     }

@@ -4,14 +4,7 @@ import com.construcao.software.users.dto.PapelDTO;
 import com.construcao.software.users.model.Papel;
 import com.construcao.software.users.repository.PapelRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
@@ -33,7 +26,7 @@ public class PapelController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Papel> recuperaPapeisPorId(@RequestParam String id) {
+    public ResponseEntity<Papel> recuperaPapeisPorId(@PathVariable String id) {
         var result = papelRepository.findById(id);
         return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -50,7 +43,7 @@ public class PapelController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> alterarPapel(@RequestParam String id,
+    public ResponseEntity<?> alterarPapel(@PathVariable String id,
                                           @RequestBody PapelDTO papelDTO) {
         var papel = papelRepository.findById(id);
 
@@ -65,7 +58,7 @@ public class PapelController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletarPapel(@RequestParam String id) {
+    public ResponseEntity<?> deletarPapel(@PathVariable String id) {
         var papel = papelRepository.findById(id);
 
         if (papel.isEmpty()) {

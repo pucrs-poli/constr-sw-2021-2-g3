@@ -13,12 +13,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class KeycloakController {
 
     private final String realm;
     private final Keycloak keyCloak;
 
-    public UserController(Keycloak keyCloak, @Value("${keycloak.realm}") String realm) {
+    public KeycloakController(Keycloak keyCloak, @Value("${keycloak.realm}") String realm) {
         this.keyCloak = keyCloak;
         this.realm = realm;
     }
