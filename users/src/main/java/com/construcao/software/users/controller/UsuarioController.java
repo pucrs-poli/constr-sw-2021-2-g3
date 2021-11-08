@@ -26,9 +26,16 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UsuarioDTO>> recuperarUsuarios() {
-
-        var usuarios = converterUsuariosParaDTO(usuarioRepository.findAll());
+    public ResponseEntity<List<UsuarioDTO>> recuperarUsuarios(@RequestParam(required = false) String matricula,
+                                                              @RequestParam(required = false) String login,
+                                                              @RequestParam(required = false) String email,
+                                                              @RequestParam(required = false) String inicioNome) {
+        List<UsuarioDTO> usuarios;
+        if (matricula == null && login == null && email == null && inicioNome == null) {
+            usuarios = converterUsuariosParaDTO(usuarioRepository.findAll());
+        } else {
+            usuarios = converterUsuariosParaDTO(usuarioRepository.findAllByMatriculaOrLoginOrEmailOrNomeStartsWith(matricula, login, email, inicioNome));
+        }
         return ResponseEntity.ok(usuarios);
     }
 
@@ -40,7 +47,7 @@ public class UsuarioController {
                             .map(papel -> new PapelDTO(papel.getNome()))
                             .collect(Collectors.toList());
 
-                    return new UsuarioDTO(usuario.getEmail(), usuario.getLogin(), papeis, usuario.getMatricula());
+                    return new UsuarioDTO(usuario.getEmail(), usuario.getNome(), usuario.getLogin(), papeis, usuario.getMatricula());
                 })
                 .collect(Collectors.toList());
     }
@@ -62,7 +69,7 @@ public class UsuarioController {
                 .map(Optional::get)
                 .collect(Collectors.toList());
 
-        var usuario = new Usuario(usuarioDTO.getEmail(), usuarioDTO.getLogin(), papeis, usuarioDTO.getMatricula());
+        var usuario = new Usuario(usuarioDTO.getNome(), usuarioDTO.getEmail(), usuarioDTO.getLogin(), papeis, usuarioDTO.getMatricula());
         var salvo = usuarioRepository.save(usuario);
         var uriComponents = b.path("/usuarios/{id}").buildAndExpand(salvo.getId());
         return ResponseEntity.created(uriComponents.toUri()).build();

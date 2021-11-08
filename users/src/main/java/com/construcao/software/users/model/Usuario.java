@@ -9,12 +9,14 @@ import java.util.List;
 public class Usuario {
     @Id
     private String id;
+    private String nome;
     private String email;
     private String login;
     private List<Papel> papeis;
     private String matricula;
 
-    public Usuario(String email, String login, List<Papel> papeis, String matricula) {
+    public Usuario(String nome, String email, String login, List<Papel> papeis, String matricula) {
+        this.nome = nome;
         this.email = email;
         this.login = login;
         this.papeis = papeis;
@@ -59,6 +61,10 @@ public class Usuario {
 
     public void setMatricula(String matricula) {
         this.matricula = matricula;
+    }
+
+    public String getNome() {
+        return nome;
     }
 
     @Override
