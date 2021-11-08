@@ -15,6 +15,15 @@ public class Usuario {
     private List<Papel> papeis;
     private String matricula;
 
+    public Usuario(String id, String nome, String email, String login, List<Papel> papeis, String matricula) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.login = login;
+        this.papeis = papeis;
+        this.matricula = matricula;
+    }
+
     public Usuario(String nome, String email, String login, List<Papel> papeis, String matricula) {
         this.nome = nome;
         this.email = email;
@@ -22,6 +31,8 @@ public class Usuario {
         this.papeis = papeis;
         this.matricula = matricula;
     }
+
+    public Usuario() {}
 
     public String getId() {
         return id;
@@ -65,6 +76,10 @@ public class Usuario {
 
     public String getNome() {
         return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     @Override
