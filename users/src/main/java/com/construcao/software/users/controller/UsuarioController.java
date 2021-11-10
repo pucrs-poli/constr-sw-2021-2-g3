@@ -68,7 +68,7 @@ public class UsuarioController {
         var usuario = new Usuario(usuarioDTO.getNome(), usuarioDTO.getEmail(), usuarioDTO.getLogin(), papeis, usuarioDTO.getMatricula());
         var salvo = usuarioRepository.save(usuario);
         var uriComponents = b.path("/usuarios/{id}").buildAndExpand(salvo.getId());
-        return ResponseEntity.created(uriComponents.toUri()).build();
+        return ResponseEntity.created(uriComponents.toUri()).body(salvo);
     }
 
     @DeleteMapping("/{id}")

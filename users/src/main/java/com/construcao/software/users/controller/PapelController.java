@@ -39,7 +39,7 @@ public class PapelController {
 
         var uriComponents = b.path("/papeis/{id}").buildAndExpand(salvo.getId());
 
-        return ResponseEntity.created(uriComponents.toUri()).build();
+        return ResponseEntity.created(uriComponents.toUri()).body(salvo);
     }
 
     @PutMapping("/{id}")
