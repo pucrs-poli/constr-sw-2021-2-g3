@@ -1,7 +1,10 @@
 package com.construcao.software.users.dto;
 
+import javax.validation.constraints.NotEmpty;
+
 public class PapelDTO {
 
+    @NotEmpty
     private String nome;
 
     public PapelDTO() {
