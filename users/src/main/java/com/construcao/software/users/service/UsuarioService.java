@@ -1,6 +1,7 @@
 package com.construcao.software.users.service;
 
 import com.construcao.software.users.client.KeySeguroClient;
+import com.construcao.software.users.client.dto.EditUserDTO;
 import com.construcao.software.users.dto.PapelDTO;
 import com.construcao.software.users.dto.UsuarioDTO;
 import com.construcao.software.users.mapper.UserDTOMapper;
@@ -60,7 +61,15 @@ public class UsuarioService {
         var usuarioKeycloak = keySeguroClient.createUser(UserDTOMapper.toCreateUserDTO(usuarioDTO));
 
         var papeis = buscaPapeis(usuarioDTO);
-        var usuario = new Usuario(usuarioKeycloak.getId(), usuarioDTO.getNome(), usuarioDTO.getEmail(), usuarioDTO.getLogin(), papeis, usuarioDTO.getMatricula(), usuarioDTO.getSenha());
+        var usuario = Usuario.builder()
+                .keycloakId(usuarioKeycloak.getId())
+                .nome(usuarioDTO.getNome())
+                .email(usuarioDTO.getEmail())
+                .login(usuarioDTO.getLogin())
+                .papeis(papeis)
+                .matricula(usuarioDTO.getMatricula())
+                .senha(usuarioDTO.getSenha())
+                .build();
         return usuarioRepository.save(usuario);
     }
 
@@ -78,17 +87,31 @@ public class UsuarioService {
         if (usuario.isEmpty()) {
             throw new IllegalArgumentException("Usuário não encontrado.");
         }
+        // Pode lançar exceção desconhecida.
+        keySeguroClient.deleteUser(id);
         usuarioRepository.deleteById(id);
     }
 
     public Usuario editarTodoUsuario(String id, UsuarioDTO usuarioDTO) {
-        var usuario = usuarioRepository.findById(id);
-        if (usuario.isEmpty()) {
+        var usuarioOptional = usuarioRepository.findById(id);
+        if (usuarioOptional.isEmpty()) {
             throw new IllegalArgumentException("Usuário não encontrado.");
         }
+        var usuario = usuarioOptional.get();
 
         var papeis = buscaPapeis(usuarioDTO);
-        var entidade = new Usuario(id, usuarioDTO.getNome(), usuarioDTO.getEmail(), usuarioDTO.getLogin(), papeis, usuarioDTO.getMatricula(), usuarioDTO.getSenha());
+        var entidade = Usuario.toBuilder(usuario)
+                .senha(usuarioDTO.getSenha())
+                .email(usuarioDTO.getEmail())
+                .login(usuarioDTO.getLogin())
+                .matricula(usuarioDTO.getMatricula())
+                .nome(usuarioDTO.getNome())
+                .papeis(papeis)
+                .build();
+
+        var papel = usuario.getPapeis().get(0).toString();
+        var editUserDTO = new EditUserDTO(papel, usuario.getEmail());
+        keySeguroClient.editUser(editUserDTO);
         return usuarioRepository.save(entidade);
     }
 
@@ -121,6 +144,7 @@ public class UsuarioService {
         if (usuarioDTO.getLogin() != null) {
             usuarioAlterado.setLogin(usuarioDTO.getLogin());
         }
+
 
         return usuarioRepository.save(usuarioAlterado);
     }
