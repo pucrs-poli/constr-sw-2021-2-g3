@@ -1,5 +1,6 @@
 package com.construcao.software.users.client;
 
+import com.construcao.software.users.client.dto.ChangePasswordDTO;
 import com.construcao.software.users.client.dto.CreateUserRequest;
 import com.construcao.software.users.client.dto.CreateUserResponse;
 import com.construcao.software.users.client.dto.EditUserDTO;
@@ -29,6 +30,11 @@ public class KeySeguroClient {
     }
 
     public String evaluatePermission(EvaluatePermissionRequest request) {
+
+        if (mock) {
+            return "OK";
+        }
+
         return client.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/auth/evaluate_permission")
@@ -70,13 +76,13 @@ public class KeySeguroClient {
                 .block();
     }
 
-    public CreateUserResponse editUser(EditUserDTO userDTO) {
+    public CreateUserResponse editUser(String id, EditUserDTO userDTO) {
         if (mock) {
             return new CreateUserResponse("fakeid", "rabelo", "admin", "rabelo.example.com");
         }
 
         return client.put()
-                .uri(URI.create("/users"))
+                .uri(URI.create("/users/" + id))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(userDTO)
@@ -84,5 +90,23 @@ public class KeySeguroClient {
                 .bodyToMono(CreateUserResponse.class)
                 .block();
     }
+
+    public CreateUserResponse changePassword(String id, ChangePasswordDTO request) {
+
+        if (mock) {
+            return new CreateUserResponse("fakeid", "rabelo", "admin", "rabelo.example.com");
+        }
+
+        return client.patch()
+                .uri(URI.create("/users/" + id))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(CreateUserResponse.class)
+                .block();
+    }
+
+
 
 }

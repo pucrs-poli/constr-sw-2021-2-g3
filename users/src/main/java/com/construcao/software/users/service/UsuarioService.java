@@ -1,7 +1,9 @@
 package com.construcao.software.users.service;
 
 import com.construcao.software.users.client.KeySeguroClient;
+import com.construcao.software.users.client.dto.ChangePasswordDTO;
 import com.construcao.software.users.client.dto.EditUserDTO;
+import com.construcao.software.users.client.dto.EvaluatePermissionRequest;
 import com.construcao.software.users.dto.PapelDTO;
 import com.construcao.software.users.dto.UsuarioDTO;
 import com.construcao.software.users.mapper.UserDTOMapper;
@@ -111,7 +113,7 @@ public class UsuarioService {
 
         var papel = usuario.getPapeis().get(0).toString();
         var editUserDTO = new EditUserDTO(papel, usuario.getEmail());
-        keySeguroClient.editUser(editUserDTO);
+        keySeguroClient.editUser(id, editUserDTO);
         return usuarioRepository.save(entidade);
     }
 
@@ -121,15 +123,18 @@ public class UsuarioService {
             throw new IllegalArgumentException("Usuário não encontrado.");
         }
 
+        var roleOrEmailExists = false;
         var usuarioAlterado = usuario.get();
 
         List<Papel> papeis;
         if (usuarioDTO.getPapeis() != null) {
+            roleOrEmailExists = true;
             papeis = buscaPapeis(usuarioDTO);
             usuarioAlterado.setPapeis(papeis);
         }
 
         if (usuarioDTO.getEmail() != null) {
+            roleOrEmailExists = true;
             usuarioAlterado.setEmail(usuarioDTO.getEmail());
         }
 
@@ -145,6 +150,16 @@ public class UsuarioService {
             usuarioAlterado.setLogin(usuarioDTO.getLogin());
         }
 
+        if (usuarioDTO.getSenha() != null) {
+            var changePasswordDTO = new ChangePasswordDTO(usuarioDTO.getSenha());
+            keySeguroClient.changePassword(id, changePasswordDTO);
+        }
+
+        if (roleOrEmailExists) {
+            var papel = usuarioAlterado.getPapeis().get(0).toString();
+            var editUserDTO = new EditUserDTO(papel, usuarioAlterado.getEmail());
+            keySeguroClient.editUser(id, editUserDTO);
+        }
 
         return usuarioRepository.save(usuarioAlterado);
     }
