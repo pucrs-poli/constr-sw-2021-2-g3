@@ -11,6 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.util.List;
 
+@Deprecated
 @RestController
 @RequestMapping("/papeis")
 public class PapelController {

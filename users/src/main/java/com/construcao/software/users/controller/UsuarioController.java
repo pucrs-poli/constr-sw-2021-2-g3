@@ -44,9 +44,13 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<Usuario> criarUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO,
                                           UriComponentsBuilder b) {
-        var salvo = usuarioService.criarUsuario(usuarioDTO);
-        var uriComponents = b.path("/usuarios/{id}").buildAndExpand(salvo.getId());
-        return ResponseEntity.created(uriComponents.toUri()).body(salvo);
+        try {
+            var salvo = usuarioService.criarUsuario(usuarioDTO);
+            var uriComponents = b.path("/usuarios/{id}").buildAndExpand(salvo.getId());
+            return ResponseEntity.created(uriComponents.toUri()).body(salvo);
+        } catch(Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @DeleteMapping("/{id}")

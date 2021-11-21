@@ -1,7 +1,9 @@
 package com.construcao.software.users.service;
 
+import com.construcao.software.users.client.KeySeguroClient;
 import com.construcao.software.users.dto.PapelDTO;
 import com.construcao.software.users.dto.UsuarioDTO;
+import com.construcao.software.users.mapper.UserDTOMapper;
 import com.construcao.software.users.model.Papel;
 import com.construcao.software.users.model.Usuario;
 import com.construcao.software.users.repository.PapelRepository;
@@ -18,10 +20,12 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PapelRepository papelRepository;
+    private final KeySeguroClient keySeguroClient;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, PapelRepository papelRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PapelRepository papelRepository, KeySeguroClient keySeguroClient) {
         this.usuarioRepository = usuarioRepository;
         this.papelRepository = papelRepository;
+        this.keySeguroClient = keySeguroClient;
     }
 
     public List<UsuarioDTO> recuperarUsuarios(String matricula, String login, String email, String inicioNome) {
@@ -43,7 +47,7 @@ public class UsuarioService {
                             .map(papel -> new PapelDTO(papel.getNome()))
                             .collect(Collectors.toList());
 
-                    return new UsuarioDTO(usuario.getEmail(), usuario.getNome(), usuario.getLogin(), papeis, usuario.getMatricula());
+                    return new UsuarioDTO(usuario.getEmail(), usuario.getNome(), usuario.getLogin(), papeis, usuario.getMatricula(), usuario.getSenha());
                 })
                 .collect(Collectors.toList());
     }
@@ -53,8 +57,10 @@ public class UsuarioService {
     }
 
     public Usuario criarUsuario(UsuarioDTO usuarioDTO) {
+        var usuarioKeycloak = keySeguroClient.createUser(UserDTOMapper.toCreateUserDTO(usuarioDTO));
+
         var papeis = buscaPapeis(usuarioDTO);
-        var usuario = new Usuario(usuarioDTO.getNome(), usuarioDTO.getEmail(), usuarioDTO.getLogin(), papeis, usuarioDTO.getMatricula());
+        var usuario = new Usuario(usuarioKeycloak.getId(), usuarioDTO.getNome(), usuarioDTO.getEmail(), usuarioDTO.getLogin(), papeis, usuarioDTO.getMatricula(), usuarioDTO.getSenha());
         return usuarioRepository.save(usuario);
     }
 
@@ -82,7 +88,7 @@ public class UsuarioService {
         }
 
         var papeis = buscaPapeis(usuarioDTO);
-        var entidade = new Usuario(id, usuarioDTO.getNome(), usuarioDTO.getEmail(), usuarioDTO.getLogin(), papeis, usuarioDTO.getMatricula());
+        var entidade = new Usuario(id, usuarioDTO.getNome(), usuarioDTO.getEmail(), usuarioDTO.getLogin(), papeis, usuarioDTO.getMatricula(), usuarioDTO.getSenha());
         return usuarioRepository.save(entidade);
     }
 

@@ -22,15 +22,19 @@ public class UsuarioDTO {
     @Pattern(regexp = "\\d{9}")
     private String matricula;
 
+    @NotEmpty
+    private String senha;
+
     public UsuarioDTO() {
     }
 
-    public UsuarioDTO(String email, String nome, String login, List<PapelDTO> papeis, String matricula) {
+    public UsuarioDTO(String email, String nome, String login, List<PapelDTO> papeis, String matricula, String senha) {
         this.email = email;
         this.nome = nome;
         this.login = login;
         this.papeis = papeis;
         this.matricula = matricula;
+        this.senha = senha;
     }
 
     public String getEmail() {
@@ -51,5 +55,9 @@ public class UsuarioDTO {
 
     public String getNome() {
         return nome;
+    }
+
+    public String getSenha() {
+        return senha;
     }
 }

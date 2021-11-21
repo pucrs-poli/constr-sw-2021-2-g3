@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class PapelService {
 
-    private PapelRepository papelRepository;
+    private final PapelRepository papelRepository;
 
     public PapelService(PapelRepository papelRepository) {
         this.papelRepository = papelRepository;
