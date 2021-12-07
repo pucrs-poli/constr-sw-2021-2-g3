@@ -2,7 +2,6 @@ package com.construcao.software.users.controller;
 
 import com.construcao.software.users.dto.PapelDTO;
 import com.construcao.software.users.model.Papel;
-import com.construcao.software.users.repository.PapelRepository;
 import com.construcao.software.users.service.PapelService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +10,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.util.List;
 
-@Deprecated
 @RestController
 @RequestMapping("/papeis")
 public class PapelController {

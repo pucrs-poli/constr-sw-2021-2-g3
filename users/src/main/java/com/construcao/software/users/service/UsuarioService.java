@@ -4,6 +4,8 @@ import com.construcao.software.users.client.KeySeguroClient;
 import com.construcao.software.users.client.dto.ChangePasswordDTO;
 import com.construcao.software.users.client.dto.EditUserDTO;
 import com.construcao.software.users.client.dto.EvaluatePermissionRequest;
+import com.construcao.software.users.dto.CriarUsuarioDTO;
+import com.construcao.software.users.dto.MudarSenhaUsuarioDTO;
 import com.construcao.software.users.dto.PapelDTO;
 import com.construcao.software.users.dto.UsuarioDTO;
 import com.construcao.software.users.mapper.UserDTOMapper;
@@ -50,16 +52,26 @@ public class UsuarioService {
                             .map(papel -> new PapelDTO(papel.getNome()))
                             .collect(Collectors.toList());
 
-                    return new UsuarioDTO(usuario.getEmail(), usuario.getNome(), usuario.getLogin(), papeis, usuario.getMatricula(), usuario.getSenha());
+                    return new UsuarioDTO(usuario.getId(), usuario.getEmail(), usuario.getNome(), usuario.getLogin(), papeis, usuario.getMatricula());
                 })
                 .collect(Collectors.toList());
     }
 
-    public Optional<Usuario> recuperarUsuariosPorId(String id) {
-        return usuarioRepository.findById(id);
+    private UsuarioDTO converterUsuarioParaDTO(Usuario usuario) {
+
+        var papeis = usuario.getPapeis()
+                .stream()
+                .map(papel -> new PapelDTO(papel.getNome()))
+                .collect(Collectors.toList());
+
+        return new UsuarioDTO(usuario.getId(), usuario.getEmail(), usuario.getNome(), usuario.getLogin(), papeis, usuario.getMatricula());
     }
 
-    public Usuario criarUsuario(UsuarioDTO usuarioDTO) {
+    public Optional<UsuarioDTO> recuperarUsuariosPorId(String id) {
+        return usuarioRepository.findById(id).map(this::converterUsuarioParaDTO);
+    }
+
+    public UsuarioDTO criarUsuario(CriarUsuarioDTO usuarioDTO) {
         var usuarioKeycloak = keySeguroClient.createUser(UserDTOMapper.toCreateUserDTO(usuarioDTO));
 
         var papeis = buscaPapeis(usuarioDTO);
@@ -72,10 +84,19 @@ public class UsuarioService {
                 .matricula(usuarioDTO.getMatricula())
                 .senha(usuarioDTO.getSenha())
                 .build();
-        return usuarioRepository.save(usuario);
+        return converterUsuarioParaDTO(usuarioRepository.save(usuario));
     }
 
     private List<Papel> buscaPapeis(UsuarioDTO usuarioDTO) {
+        return usuarioDTO.getPapeis()
+                .stream()
+                .map(it -> papelRepository.findByNome(it.getNome()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    private List<Papel> buscaPapeis(CriarUsuarioDTO usuarioDTO) {
         return usuarioDTO.getPapeis()
                 .stream()
                 .map(it -> papelRepository.findByNome(it.getNome()))
@@ -94,7 +115,7 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
-    public Usuario editarTodoUsuario(String id, UsuarioDTO usuarioDTO) {
+    public UsuarioDTO editarTodoUsuario(String id, CriarUsuarioDTO usuarioDTO) {
         var usuarioOptional = usuarioRepository.findById(id);
         if (usuarioOptional.isEmpty()) {
             throw new IllegalArgumentException("Usuário não encontrado.");
@@ -114,53 +135,19 @@ public class UsuarioService {
         var papel = usuario.getPapeis().get(0).toString();
         var editUserDTO = new EditUserDTO(papel, usuario.getEmail());
         keySeguroClient.editUser(id, editUserDTO);
-        return usuarioRepository.save(entidade);
+        return converterUsuarioParaDTO(usuarioRepository.save(entidade));
     }
 
-    public Usuario editarUsuario(String id, UsuarioDTO usuarioDTO) {
+    public UsuarioDTO editarUsuario(String id, MudarSenhaUsuarioDTO usuarioDTO) {
+
         var usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {
             throw new IllegalArgumentException("Usuário não encontrado.");
         }
 
-        var roleOrEmailExists = false;
         var usuarioAlterado = usuario.get();
+        usuarioAlterado.setEmail(usuarioDTO.getSenhaNova());
 
-        List<Papel> papeis;
-        if (usuarioDTO.getPapeis() != null) {
-            roleOrEmailExists = true;
-            papeis = buscaPapeis(usuarioDTO);
-            usuarioAlterado.setPapeis(papeis);
-        }
-
-        if (usuarioDTO.getEmail() != null) {
-            roleOrEmailExists = true;
-            usuarioAlterado.setEmail(usuarioDTO.getEmail());
-        }
-
-        if (usuarioDTO.getNome() != null) {
-            usuarioAlterado.setNome(usuarioDTO.getNome());
-        }
-
-        if (usuarioDTO.getMatricula() != null) {
-            usuarioAlterado.setMatricula(usuarioDTO.getMatricula());
-        }
-
-        if (usuarioDTO.getLogin() != null) {
-            usuarioAlterado.setLogin(usuarioDTO.getLogin());
-        }
-
-        if (usuarioDTO.getSenha() != null) {
-            var changePasswordDTO = new ChangePasswordDTO(usuarioDTO.getSenha());
-            keySeguroClient.changePassword(id, changePasswordDTO);
-        }
-
-        if (roleOrEmailExists) {
-            var papel = usuarioAlterado.getPapeis().get(0).toString();
-            var editUserDTO = new EditUserDTO(papel, usuarioAlterado.getEmail());
-            keySeguroClient.editUser(id, editUserDTO);
-        }
-
-        return usuarioRepository.save(usuarioAlterado);
+        return converterUsuarioParaDTO(usuarioRepository.save(usuarioAlterado));
     }
 }

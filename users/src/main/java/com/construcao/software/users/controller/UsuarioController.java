@@ -1,11 +1,8 @@
 package com.construcao.software.users.controller;
 
+import com.construcao.software.users.dto.CriarUsuarioDTO;
+import com.construcao.software.users.dto.MudarSenhaUsuarioDTO;
 import com.construcao.software.users.dto.UsuarioDTO;
-import com.construcao.software.users.model.Papel;
-import com.construcao.software.users.model.Usuario;
-import com.construcao.software.users.repository.PapelRepository;
-import com.construcao.software.users.repository.UsuarioRepository;
-import com.construcao.software.users.service.AuthService;
 import com.construcao.software.users.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,19 +10,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
-    private final AuthService authService;
 
-    public UsuarioController(UsuarioService usuarioService, AuthService authService) {
+    public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
-        this.authService = authService;
     }
 
 
@@ -40,7 +33,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> recuperarUsuariosPorId(@PathVariable String id) {
+    public ResponseEntity<UsuarioDTO> recuperarUsuariosPorId(@PathVariable String id) {
         // TODO - validar autenticação
         return usuarioService.recuperarUsuariosPorId(id)
                 .map(ResponseEntity::ok)
@@ -48,7 +41,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> criarUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO,
+    public ResponseEntity<UsuarioDTO> criarUsuario(@Valid @RequestBody CriarUsuarioDTO usuarioDTO,
                                           UriComponentsBuilder b) {
         // TODO - validar autenticação
         try {
@@ -72,16 +65,16 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> alterarTodoUsuario(@PathVariable String id,
-                                          @RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<UsuarioDTO> alterarTodoUsuario(@PathVariable String id,
+                                          @RequestBody CriarUsuarioDTO usuarioDTO) {
         // TODO - validar autenticação
         var usuario = usuarioService.editarTodoUsuario(id, usuarioDTO);
         return ResponseEntity.ok().body(usuario);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Usuario> alterarUsuario(@PathVariable String id,
-                                            @RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<UsuarioDTO> alterarUsuario(@PathVariable String id,
+                                            @RequestBody MudarSenhaUsuarioDTO usuarioDTO) {
         // TODO - validar autenticação
         var entidadeSalva = usuarioService.editarUsuario(id, usuarioDTO);
         return ResponseEntity.ok().body(entidadeSalva);

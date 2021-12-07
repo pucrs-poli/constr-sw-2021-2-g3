@@ -6,9 +6,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
-public class UsuarioDTO {
-
-    private String id;
+public class CriarUsuarioDTO {
 
     @Email(message = "Favor inserir e-mail no seguinte formato: rabelo@example.com")
     private String email;
@@ -24,11 +22,13 @@ public class UsuarioDTO {
     @Pattern(regexp = "\\d{9}", message = "A matricula deve ter 9 dígitos")
     private String matricula;
 
-    public UsuarioDTO() {
+    @NotEmpty(message = "Impossível criar um usuário sem senha")
+    private String senha;
+
+    public CriarUsuarioDTO() {
     }
 
-    public UsuarioDTO(String id, String email, String nome, String login, List<PapelDTO> papeis, String matricula) {
-        this.id = id;
+    public CriarUsuarioDTO(String email, String nome, String login, List<PapelDTO> papeis, String matricula) {
         this.email = email;
         this.nome = nome;
         this.login = login;
@@ -56,11 +56,7 @@ public class UsuarioDTO {
         return nome;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public String getSenha() {
+        return senha;
     }
 }
